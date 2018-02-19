@@ -62,6 +62,7 @@ __in POB_PRE_OPERATION_INFORMATION  OperationInformation
 			//Write to the address space of the process, such as by calling the user-mode WriteProcessMemory routine.  
 			OperationInformation->Parameters->CreateHandleInformation.DesiredAccess &= ~PROCESS_VM_WRITE;
 		}
+		//OperationInformation->Parameters->CreateHandleInformation.DesiredAccess = 0;
 	}
 	return OB_PREOP_SUCCESS;
 }

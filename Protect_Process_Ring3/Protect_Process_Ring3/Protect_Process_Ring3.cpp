@@ -11,8 +11,6 @@
 
 extern "C" __declspec(dllexport) int Protect(int pid)
 {
-	DWORD aaa = PROTECT_PROCESS;
-	MessageBoxA(NULL, std::to_string(aaa).data(), NULL, NULL);
 	HANDLE m_hDevice = CreateFileA("\\\\.\\Protect_Process", GENERIC_READ | GENERIC_WRITE, 0,
 		NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (INVALID_HANDLE_VALUE == m_hDevice)
@@ -29,8 +27,6 @@ extern "C" __declspec(dllexport) int Protect(int pid)
 
 extern "C" __declspec(dllexport) int RE_Protect()
 {
-	DWORD aaa = RE_PROTECT_PROCESS;
-	MessageBoxA(NULL, std::to_string(aaa).data(), NULL, NULL);
 	HANDLE m_hDevice = CreateFileA("\\\\.\\Protect_Process", GENERIC_READ | GENERIC_WRITE, 0,
 		NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (INVALID_HANDLE_VALUE == m_hDevice)
