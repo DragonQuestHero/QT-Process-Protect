@@ -1,6 +1,7 @@
 #pragma once
 #include "Drive.h"
 #include "Protect.h"
+#include "Struct.h"
 
 
 class IO_Control
@@ -9,6 +10,7 @@ public:
 	IO_Control(Protect *p)
 	{
 		_Protect = p;
+		_Protect->Hook_Start();
 	}
 	~IO_Control()
 	{
@@ -23,15 +25,5 @@ private:
 	UNICODE_STRING DeviceName;
 	UNICODE_STRING LinkName;
 	static Protect *_Protect;
-public:
-	void * __cdecl operator new(size_t size, POOL_TYPE PoolType = PagedPool)
-	{
-		return ExAllocatePool(PagedPool, size);
-	}
-
-		void __cdecl operator delete(void* pointer)
-	{
-		ExFreePool(pointer);
-	}
 };
 

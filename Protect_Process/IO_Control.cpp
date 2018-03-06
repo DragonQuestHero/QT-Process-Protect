@@ -73,15 +73,16 @@ NTSTATUS IO_Control::IO_Control_Center(PDEVICE_OBJECT  DeviceObject, PIRP  pIrp)
 		ULONG temp_pid;
 		RtlUnicodeStringToInteger(&temp_str, 10, &temp_pid);
 		DbgPrint("%d\n", temp_pid);
+		PID_LIST *temp_pidlist = new PID_LIST();
+		temp_pidlist->PID = temp_pid;
+		ExInterlockedInsertHeadList(&Protect::_List, &temp_pidlist->List, &Protect::_Lock);
 		RtlFreeUnicodeString(&temp_str);
-		_Protect->Hook_Start(temp_pid);
 	}
 	if (ulcode == RE_PROTECT_PROCESS)
 	{
 		_Protect->Re_Hook();
 	}
 	DbgPrint("%d\n", ulcode);
-	DbgPrint("%d\n", PROTECT_PROCESS);
 	
 	
 

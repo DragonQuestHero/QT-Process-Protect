@@ -1,13 +1,12 @@
 #include "Protect.h"
 
-ULONG Protect::_PID = 0;
+LIST_ENTRY Protect::_List;
+KSPIN_LOCK Protect::_Lock;
 
-void Protect::Hook_Start(ULONG pid)
+void Protect::Hook_Start()
 {
 	OB_OPERATION_REGISTRATION oor;
 	OB_CALLBACK_REGISTRATION ob;
-
-	_PID = pid;
 
 	ob.Version = ObGetFilterVersion();
 	ob.OperationRegistrationCount = 1;
@@ -40,29 +39,38 @@ __in POB_PRE_OPERATION_INFORMATION  OperationInformation
 	HANDLE pid = PsGetProcessId((PEPROCESS)OperationInformation->Object);
 	ULONG upid = (ULONG)pid;
 
-	if (upid == _PID)//_PID
+	if (IsListEmpty(&_List))
 	{
-		if ((OperationInformation->Parameters->CreateHandleInformation.OriginalDesiredAccess & PROCESS_TERMINATE) == PROCESS_TERMINATE)
+		return OB_PREOP_SUCCESS;
+	}
+	for (auto p = _List.Flink; p != &_List; p = p->Flink)
+	{
+		PID_LIST *p2 = CONTAINING_RECORD(p, PID_LIST, List);
+
+		if (upid == p2->PID)//_PID
 		{
-			//Terminate the process, such as by calling the user-mode TerminateProcess routine..  
-			OperationInformation->Parameters->CreateHandleInformation.DesiredAccess &= ~PROCESS_TERMINATE;
+			if ((OperationInformation->Parameters->CreateHandleInformation.OriginalDesiredAccess & PROCESS_TERMINATE) == PROCESS_TERMINATE)
+			{
+				//Terminate the process, such as by calling the user-mode TerminateProcess routine..  
+				OperationInformation->Parameters->CreateHandleInformation.DesiredAccess &= ~PROCESS_TERMINATE;
+			}
+			if ((OperationInformation->Parameters->CreateHandleInformation.OriginalDesiredAccess & PROCESS_VM_OPERATION) == PROCESS_VM_OPERATION)
+			{
+				//Modify the address space of the process, such as by calling the user-mode WriteProcessMemory and VirtualProtectEx routines.  
+				OperationInformation->Parameters->CreateHandleInformation.DesiredAccess &= ~PROCESS_VM_OPERATION;
+			}
+			if ((OperationInformation->Parameters->CreateHandleInformation.OriginalDesiredAccess & PROCESS_VM_READ) == PROCESS_VM_READ)
+			{
+				//Read to the address space of the process, such as by calling the user-mode ReadProcessMemory routine.  
+				OperationInformation->Parameters->CreateHandleInformation.DesiredAccess &= ~PROCESS_VM_READ;
+			}
+			if ((OperationInformation->Parameters->CreateHandleInformation.OriginalDesiredAccess & PROCESS_VM_WRITE) == PROCESS_VM_WRITE)
+			{
+				//Write to the address space of the process, such as by calling the user-mode WriteProcessMemory routine.  
+				OperationInformation->Parameters->CreateHandleInformation.DesiredAccess &= ~PROCESS_VM_WRITE;
+			}
+			//OperationInformation->Parameters->CreateHandleInformation.DesiredAccess = 0;
 		}
-		if ((OperationInformation->Parameters->CreateHandleInformation.OriginalDesiredAccess & PROCESS_VM_OPERATION) == PROCESS_VM_OPERATION)
-		{
-			//Modify the address space of the process, such as by calling the user-mode WriteProcessMemory and VirtualProtectEx routines.  
-			OperationInformation->Parameters->CreateHandleInformation.DesiredAccess &= ~PROCESS_VM_OPERATION;
-		}
-		if ((OperationInformation->Parameters->CreateHandleInformation.OriginalDesiredAccess & PROCESS_VM_READ) == PROCESS_VM_READ)
-		{
-			//Read to the address space of the process, such as by calling the user-mode ReadProcessMemory routine.  
-			OperationInformation->Parameters->CreateHandleInformation.DesiredAccess &= ~PROCESS_VM_READ;
-		}
-		if ((OperationInformation->Parameters->CreateHandleInformation.OriginalDesiredAccess & PROCESS_VM_WRITE) == PROCESS_VM_WRITE)
-		{
-			//Write to the address space of the process, such as by calling the user-mode WriteProcessMemory routine.  
-			OperationInformation->Parameters->CreateHandleInformation.DesiredAccess &= ~PROCESS_VM_WRITE;
-		}
-		//OperationInformation->Parameters->CreateHandleInformation.DesiredAccess = 0;
 	}
 	return OB_PREOP_SUCCESS;
 }

@@ -39,5 +39,8 @@
     <ClInclude Include="IO_Control.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Struct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

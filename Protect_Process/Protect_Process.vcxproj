@@ -220,6 +220,7 @@
     <ClInclude Include="Drive.h" />
     <ClInclude Include="IO_Control.h" />
     <ClInclude Include="Protect.h" />
+    <ClInclude Include="Struct.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
