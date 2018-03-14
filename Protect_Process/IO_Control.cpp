@@ -64,19 +64,22 @@ NTSTATUS IO_Control::IO_Control_Center(PDEVICE_OBJECT  DeviceObject, PIRP  pIrp)
 	if (ulcode == PROTECT_PROCESS)
 	{
 		ULONG write_length = irp->Parameters.DeviceIoControl.InputBufferLength;
-		char p[1024] = { 0 };
-		RtlCopyMemory(p, pIrp->AssociatedIrp.SystemBuffer, write_length);
-		ANSI_STRING temp_ascii_str = { 0 };
-		RtlInitAnsiString(&temp_ascii_str, p);
-		UNICODE_STRING temp_str;
-		RtlAnsiStringToUnicodeString(&temp_str, &temp_ascii_str, true);
-		ULONG temp_pid;
-		RtlUnicodeStringToInteger(&temp_str, 10, &temp_pid);
-		DbgPrint("%d\n", temp_pid);
-		PID_LIST *temp_pidlist = new PID_LIST();
-		temp_pidlist->PID = temp_pid;
-		ExInterlockedInsertHeadList(&Protect::_List, &temp_pidlist->List, &Protect::_Lock);
-		RtlFreeUnicodeString(&temp_str);
+		if (irp->Parameters.DeviceIoControl.InputBufferLength > 0)
+		{
+			char p[1024] = { 0 };
+			RtlCopyMemory(p, pIrp->AssociatedIrp.SystemBuffer, write_length);
+			ANSI_STRING temp_ascii_str = { 0 };
+			RtlInitAnsiString(&temp_ascii_str, p);
+			UNICODE_STRING temp_str;
+			RtlAnsiStringToUnicodeString(&temp_str, &temp_ascii_str, true);
+			ULONG temp_pid;
+			RtlUnicodeStringToInteger(&temp_str, 10, &temp_pid);
+			DbgPrint("%d\n", temp_pid);
+			PID_LIST *temp_pidlist = new PID_LIST();
+			temp_pidlist->PID = temp_pid;
+			ExInterlockedInsertHeadList(&Protect::_List, &temp_pidlist->List, &Protect::_Lock);
+			RtlFreeUnicodeString(&temp_str);
+		}
 	}
 	if (ulcode == RE_PROTECT_PROCESS)
 	{
