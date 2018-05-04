@@ -1,23 +1,28 @@
 #pragma once
-#include "Drive.h"
+#include "CRTCPP.hpp"
+#include "Link_List.hpp"
+#include "NtSysAPI_Func.hpp"
+
 #include "Struct.h"
+
 
 class Protect
 {
 public:
 	Protect()
 	{
-		InitializeListHead(&_List);
-		KeInitializeSpinLock(&_Lock);
+		_List = new CG::Link_List<PROCESS_LIST>();
+		PROCESS_LIST temp;
+		temp.PID = 3272;
+		_List->Push(temp);
 	}
 	~Protect()
 	{
 	}
 public:
-	void Hook_Start();
-	void Re_Hook();
-	static LIST_ENTRY _List;
-	static KSPIN_LOCK _Lock;
+	void Protect_Start();
+	void Protect_Stop();
+	static CG::Link_List<PROCESS_LIST> *_List;
 private:
 	HANDLE _Handle;
 private:

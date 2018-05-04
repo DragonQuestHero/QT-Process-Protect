@@ -1,38 +1,27 @@
 #pragma once
-#include "Drive.h"
+#include "Ntddk.hpp"
 
-struct PID_LIST
+struct PROCESS_LIST
 {
-	LIST_ENTRY List;
+	PROCESS_LIST()
+	{
+		RtlZeroMemory(Process_Path, 1024);
+	}
 	ULONG PID;
+	WCHAR Process_Path[1024];
 };
 
-#ifdef _AMD64_
-static void *operator new (size_t lBlockSize)
-{
-	return ExAllocatePoolWithTag(NonPagedPool, lBlockSize, 111);
-}
+#define PROCESS_TERMINATE         0x0001    
+#define PROCESS_VM_OPERATION      0x0008    
+#define PROCESS_VM_READ           0x0010    
+#define PROCESS_VM_WRITE          0x0020  
 
-static void operator delete(void *p)
-{
-	if (!p)
-	{
-		return;
-	}
-	ExFreePoolWithTag(p, 111);
-}
-#else
-static void * __CRTDECL operator new (size_t lBlockSize)
-{
-	return ExAllocatePoolWithTag(NonPagedPool, lBlockSize, 111);
-}
+#define PROCESS_CREATE_THREAD  0x0002
+#define PROCESS_CREATE_PROCESS 0x0080
+#define PROCESS_TERMINATE      0x0001
+#define PROCESS_VM_WRITE       0x0020
+#define PROCESS_VM_READ        0x0010
+#define PROCESS_VM_OPERATION   0x0008
+#define PROCESS_SUSPEND_RESUME 0x0800
 
-static void __CRTDECL operator delete(void *p)
-{
-	if (!p)
-	{
-		return;
-	}
-	ExFreePoolWithTag(p, 111);
-}
-#endif
+
