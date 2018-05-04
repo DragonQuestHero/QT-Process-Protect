@@ -227,6 +227,7 @@
     <ClInclude Include="Link_List.hpp" />
     <ClInclude Include="Ntddk.hpp" />
     <ClInclude Include="NtSysAPI_Func.hpp" />
+    <ClInclude Include="Process.hpp" />
     <ClInclude Include="Protect.h" />
     <ClInclude Include="Struct.h" />
   </ItemGroup>

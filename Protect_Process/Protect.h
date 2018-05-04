@@ -2,6 +2,7 @@
 #include "CRTCPP.hpp"
 #include "Link_List.hpp"
 #include "NtSysAPI_Func.hpp"
+#include "Process.hpp"
 
 #include "Struct.h"
 

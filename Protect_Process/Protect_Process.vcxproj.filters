@@ -54,5 +54,8 @@
     <ClInclude Include="NtSysAPI_Func.hpp">
       <Filter>Header Files\Kernel_Lib</Filter>
     </ClInclude>
+    <ClInclude Include="Process.hpp">
+      <Filter>Header Files\Kernel_Lib</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

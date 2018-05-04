@@ -71,6 +71,55 @@ typedef struct _SYSTEM_HANDLE_INFORMATION {
 	SYSTEM_HANDLE_TABLE_ENTRY_INFO Handles[1];
 } SYSTEM_HANDLE_INFORMATION, *PSYSTEM_HANDLE_INFORMATION;
 
+typedef struct _CURDIR {
+	UNICODE_STRING DosPath;
+	HANDLE Handle;
+} CURDIR, *PCURDIR;
+
+typedef struct _RTL_DRIVE_LETTER_CURDIR {
+	USHORT Flags;
+	USHORT Length;
+	ULONG TimeStamp;
+	STRING DosPath;
+} RTL_DRIVE_LETTER_CURDIR, *PRTL_DRIVE_LETTER_CURDIR;
+
+#define RTL_MAX_DRIVE_LETTERS 32
+typedef struct _RTL_USER_PROCESS_PARAMETERS {
+	ULONG MaximumLength;
+	ULONG Length;
+
+	ULONG Flags;
+	ULONG DebugFlags;
+
+	HANDLE ConsoleHandle;
+	ULONG  ConsoleFlags;
+	HANDLE StandardInput;
+	HANDLE StandardOutput;
+	HANDLE StandardError;
+
+	CURDIR CurrentDirectory;        // ProcessParameters
+	UNICODE_STRING DllPath;         // ProcessParameters
+	UNICODE_STRING ImagePathName;   // ProcessParameters
+	UNICODE_STRING CommandLine;     // ProcessParameters
+	PVOID Environment;              // NtAllocateVirtualMemory
+
+	ULONG StartingX;
+	ULONG StartingY;
+	ULONG CountX;
+	ULONG CountY;
+	ULONG CountCharsX;
+	ULONG CountCharsY;
+	ULONG FillAttribute;
+
+	ULONG WindowFlags;
+	ULONG ShowWindowFlags;
+	UNICODE_STRING WindowTitle;     // ProcessParameters
+	UNICODE_STRING DesktopInfo;     // ProcessParameters
+	UNICODE_STRING ShellInfo;       // ProcessParameters
+	UNICODE_STRING RuntimeData;     // ProcessParameters
+	RTL_DRIVE_LETTER_CURDIR CurrentDirectores[RTL_MAX_DRIVE_LETTERS];
+} RTL_USER_PROCESS_PARAMETERS, *PRTL_USER_PROCESS_PARAMETERS;
+
 #ifdef _AMD64_
 typedef struct _LDR_DATA_TABLE_ENTRY64
 {
@@ -100,7 +149,6 @@ typedef struct _LDR_DATA_TABLE_ENTRY64
 #else
 
 #endif // _AMD64_
-
 //-------------------------------------------
 
 
@@ -129,6 +177,10 @@ typedef NTSTATUS(NTAPI *_ZwQuerySystemInformation)(
 	_Inout_   PVOID                    SystemInformation,
 	_In_      ULONG                    SystemInformationLength,
 	_Out_opt_ PULONG                   ReturnLength
+	);
+
+typedef PPEB(NTAPI *_PsGetProcessPeb)(
+	__in PEPROCESS Process
 	);
 //-------------------------------------------
 
