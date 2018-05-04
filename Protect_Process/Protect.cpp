@@ -78,22 +78,6 @@ __in POB_PRE_OPERATION_INFORMATION  OperationInformation
 		OperationInformation->Parameters->CreateHandleInformation.DesiredAccess = 0;
 	}
 
-	CG::Process temp_lib;
-	HANDLE process_handle = nullptr;
-	UNICODE_STRING process_path = {0};
-	temp_lib.Get_Process_Handle(pid, &process_handle);
-	temp_lib.Get_Process_Image(process_handle, &process_path);
-	for (int i = 0; i < _List->Get_Size(); i++)
-	{
-		PROCESS_LIST temp_list = _List->Get(i);
-		UNICODE_STRING temp_str;
-		RtlInitUnicodeString(&temp_str, temp_list.Process_Path);
-		if (FsRtlIsNameInExpression(&temp_str, &process_path, false, nullptr))
-		{
-			OperationInformation->Parameters->CreateHandleInformation.DesiredAccess = 0;
-		}
-	}
-
 	return OB_PREOP_SUCCESS;
 }
 
