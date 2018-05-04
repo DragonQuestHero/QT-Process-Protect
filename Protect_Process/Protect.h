@@ -12,9 +12,6 @@ public:
 	Protect()
 	{
 		_List = new CG::Link_List<PROCESS_LIST>();
-		PROCESS_LIST temp;
-		temp.PID = 3272;
-		_List->Push(temp);
 	}
 	~Protect()
 	{
