@@ -209,6 +209,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/INTEGRITYCHECK %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>BufferOverflowK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -221,8 +222,11 @@
     <ClCompile Include="Protect.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Drive.h" />
+    <ClInclude Include="CRTCPP.hpp" />
     <ClInclude Include="IO_Control.h" />
+    <ClInclude Include="Link_List.hpp" />
+    <ClInclude Include="Ntddk.hpp" />
+    <ClInclude Include="NtSysAPI_Func.hpp" />
     <ClInclude Include="Protect.h" />
     <ClInclude Include="Struct.h" />
   </ItemGroup>

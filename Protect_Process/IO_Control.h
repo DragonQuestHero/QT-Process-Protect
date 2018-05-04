@@ -1,5 +1,5 @@
 #pragma once
-#include "Drive.h"
+#include "CRTCPP.hpp"
 #include "Protect.h"
 #include "Struct.h"
 
@@ -7,10 +7,8 @@
 class IO_Control
 {
 public:
-	IO_Control(Protect *p)
+	IO_Control()
 	{
-		_Protect = p;
-		_Protect->Hook_Start();
 	}
 	~IO_Control()
 	{
@@ -24,6 +22,5 @@ private:
 	PDEVICE_OBJECT DeviceObject = nullptr;
 	UNICODE_STRING DeviceName;
 	UNICODE_STRING LinkName;
-	static Protect *_Protect;
 };
 

@@ -17,6 +17,9 @@
       <UniqueIdentifier>{8E41214B-6785-4CFE-B992-037D68949A14}</UniqueIdentifier>
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
     </Filter>
+    <Filter Include="Header Files\Kernel_Lib">
+      <UniqueIdentifier>{c83b383a-7902-49e3-b3ef-d201ac7efdbc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -30,9 +33,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Drive.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Protect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -41,6 +41,18 @@
     </ClInclude>
     <ClInclude Include="Struct.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CRTCPP.hpp">
+      <Filter>Header Files\Kernel_Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="Link_List.hpp">
+      <Filter>Header Files\Kernel_Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="Ntddk.hpp">
+      <Filter>Header Files\Kernel_Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="NtSysAPI_Func.hpp">
+      <Filter>Header Files\Kernel_Lib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -7,8 +7,6 @@
 #define RE_PROTECT_PROCESS CTL_CODE(FILE_DEVICE_UNKNOWN,0x7101,METHOD_BUFFERED ,FILE_ANY_ACCESS)
 
 
-Protect *IO_Control::_Protect = nullptr;
-
 NTSTATUS IO_Control::Create_IO_Control(PDRIVER_OBJECT drive_object)
 {
 	NTSTATUS status = 0;
@@ -59,33 +57,26 @@ NTSTATUS IO_Control::Delete_IO_Control(PDRIVER_OBJECT drive_object)
 NTSTATUS IO_Control::IO_Control_Center(PDEVICE_OBJECT  DeviceObject, PIRP  pIrp)
 {
 	PIO_STACK_LOCATION irp = IoGetCurrentIrpStackLocation(pIrp);
+	ULONG Io_Control_Code = irp->Parameters.DeviceIoControl.IoControlCode;
+	ULONG Input_Lenght = irp->Parameters.DeviceIoControl.InputBufferLength;
+	ULONG Output_Lenght = irp->Parameters.DeviceIoControl.OutputBufferLength;
+	WCHAR *Input_Buffer = new WCHAR[Input_Lenght];
+	RtlCopyMemory(Input_Buffer, pIrp->AssociatedIrp.SystemBuffer, Input_Lenght);
 
 	ULONG ulcode = irp->Parameters.DeviceIoControl.IoControlCode;
-	if (ulcode == PROTECT_PROCESS)
+	if (ulcode == PROTECT_PROCESS && Input_Lenght > 0)
 	{
-		ULONG write_length = irp->Parameters.DeviceIoControl.InputBufferLength;
-		if (irp->Parameters.DeviceIoControl.InputBufferLength > 0)
-		{
-			char p[1024] = { 0 };
-			RtlCopyMemory(p, pIrp->AssociatedIrp.SystemBuffer, write_length);
-			ANSI_STRING temp_ascii_str = { 0 };
-			RtlInitAnsiString(&temp_ascii_str, p);
-			UNICODE_STRING temp_str;
-			RtlAnsiStringToUnicodeString(&temp_str, &temp_ascii_str, true);
-			ULONG temp_pid;
-			RtlUnicodeStringToInteger(&temp_str, 10, &temp_pid);
-			DbgPrint("%d\n", temp_pid);
-			PID_LIST *temp_pidlist = new PID_LIST();
-			temp_pidlist->PID = temp_pid;
-			ExInterlockedInsertHeadList(&Protect::_List, &temp_pidlist->List, &Protect::_Lock);
-			RtlFreeUnicodeString(&temp_str);
-		}
+		UNICODE_STRING temp_str;
+		RtlInitUnicodeString(&temp_str, Input_Buffer);
+		ULONG temp_pid;
+		RtlUnicodeStringToInteger(&temp_str, 10, &temp_pid);
+		PROCESS_LIST temp_list;
+		temp_list.PID = temp_pid;
+		Protect::_List->Push(temp_list);
 	}
 	if (ulcode == RE_PROTECT_PROCESS)
 	{
-		_Protect->Re_Hook();
 	}
-	DbgPrint("%d\n", ulcode);
 	
 	
 
