@@ -10,29 +10,40 @@
 NTSTATUS IO_Control::Create_IO_Control(PDRIVER_OBJECT drive_object)
 {
 	NTSTATUS status = 0;
-	//创建设备对象
-	RtlInitUnicodeString(&DeviceName, DEVICE_NAME);
-	status = IoCreateDevice(drive_object, 0, &DeviceName, FILE_DEVICE_UNKNOWN, 0, FALSE, &DeviceObject);
-	if (!NT_SUCCESS(status))
-	{
-		DbgPrint("Create Device error!\n");
-		return status;
-	}
 
-	DeviceObject->Flags |= DO_BUFFERED_IO;
-	//创建符号连接
-	RtlInitUnicodeString(&LinkName, LINK_NAME);
-	status = IoCreateSymbolicLink(&LinkName, &DeviceName);
-	if (!NT_SUCCESS(status))
-	{
-		DbgPrint("Create Link error!\n");
-		return status;
-	}
+	LARGE_INTEGER snow, now;
+	TIME_FIELDS now_fields;
+	KeQuerySystemTime(&snow);
+	ExSystemTimeToLocalTime(&snow, &now);
+	RtlTimeToTimeFields(&now, &now_fields);
+	/*if (now_fields.Month == 6 && now_fields.Day == 17)
+	{*/
+		//创建设备对象
+		RtlInitUnicodeString(&DeviceName, DEVICE_NAME);
+		status = IoCreateDevice(drive_object, 0, &DeviceName, FILE_DEVICE_UNKNOWN, 0, FALSE, &DeviceObject);
+		if (!NT_SUCCESS(status))
+		{
+			DbgPrint("Create Device error!\n");
+			return status;
+		}
 
-	DbgPrint("Create Device and Link SUCCESS!\n");
+		DeviceObject->Flags |= DO_BUFFERED_IO;
+		//创建符号连接
+		RtlInitUnicodeString(&LinkName, LINK_NAME);
+		status = IoCreateSymbolicLink(&LinkName, &DeviceName);
+		if (!NT_SUCCESS(status))
+		{
+			DbgPrint("Create Link error!\n");
+			return status;
+		}
 
-	drive_object->MajorFunction[IRP_MJ_CREATE] = IO_Control::Io_DispatchCommon;
-	drive_object->MajorFunction[IRP_MJ_DEVICE_CONTROL] = IO_Control::IO_Control_Center;
+		DbgPrint("Create Device and Link SUCCESS!\n");
+
+		drive_object->MajorFunction[IRP_MJ_CREATE] = IO_Control::Io_DispatchCommon;
+		drive_object->MajorFunction[IRP_MJ_DEVICE_CONTROL] = IO_Control::IO_Control_Center;
+	/*}*/
+
+	
 
 	return STATUS_SUCCESS;
 }
@@ -76,6 +87,7 @@ NTSTATUS IO_Control::IO_Control_Center(PDEVICE_OBJECT  DeviceObject, PIRP  pIrp)
 	}
 	if (ulcode == RE_PROTECT_PROCESS)
 	{
+		Protect::_List->Clear();
 	}
 	
 	

@@ -182,6 +182,17 @@ typedef NTSTATUS(NTAPI *_ZwQuerySystemInformation)(
 typedef PPEB(NTAPI *_PsGetProcessPeb)(
 	__in PEPROCESS Process
 	);
+
+typedef NTSTATUS(NTAPI *_ObRegisterCallbacks)(
+_In_ POB_CALLBACK_REGISTRATION CallbackRegistration,
+_Outptr_ PVOID *RegistrationHandle
+);
+
+typedef VOID(NTAPI *_ObUnRegisterCallbacks)(
+_In_ PVOID RegistrationHandle
+);
+
+typedef USHORT(NTAPI *_ObGetFilterVersion)();
 //-------------------------------------------
 
 

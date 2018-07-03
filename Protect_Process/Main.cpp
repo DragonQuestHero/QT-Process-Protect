@@ -7,8 +7,7 @@ Protect *protect = nullptr;
 
 void DriverUnload(PDRIVER_OBJECT drive_object)
 {
-	UNREFERENCED_PARAMETER(drive_object);
-
+	protect->Protect_Stop();
 	io_control->Delete_IO_Control(drive_object);
 
 	DbgPrint("Unload Over!\n");
