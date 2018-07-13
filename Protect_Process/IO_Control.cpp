@@ -3,6 +3,7 @@
 #define DEVICE_NAME L"\\Device\\Protect_Process"
 #define LINK_NAME L"\\??\\Protect_Process"
 
+#define INIT CTL_CODE(FILE_DEVICE_UNKNOWN,0x7102,METHOD_BUFFERED ,FILE_ANY_ACCESS)
 #define PROTECT_PROCESS CTL_CODE(FILE_DEVICE_UNKNOWN,0x7100,METHOD_BUFFERED ,FILE_ANY_ACCESS)
 #define RE_PROTECT_PROCESS CTL_CODE(FILE_DEVICE_UNKNOWN,0x7101,METHOD_BUFFERED ,FILE_ANY_ACCESS)
 
@@ -74,8 +75,11 @@ NTSTATUS IO_Control::IO_Control_Center(PDEVICE_OBJECT  DeviceObject, PIRP  pIrp)
 	WCHAR *Input_Buffer = new WCHAR[Input_Lenght];
 	RtlCopyMemory(Input_Buffer, pIrp->AssociatedIrp.SystemBuffer, Input_Lenght);
 
-	ULONG ulcode = irp->Parameters.DeviceIoControl.IoControlCode;
-	if (ulcode == PROTECT_PROCESS && Input_Lenght > 0)
+	if (Io_Control_Code == INIT)
+	{
+
+	}
+	if (Io_Control_Code == PROTECT_PROCESS && Input_Lenght > 0)
 	{
 		UNICODE_STRING temp_str;
 		RtlInitUnicodeString(&temp_str, Input_Buffer);
@@ -85,7 +89,7 @@ NTSTATUS IO_Control::IO_Control_Center(PDEVICE_OBJECT  DeviceObject, PIRP  pIrp)
 		temp_list.PID = temp_pid;
 		Protect::_List->Push(temp_list);
 	}
-	if (ulcode == RE_PROTECT_PROCESS)
+	if (Io_Control_Code == RE_PROTECT_PROCESS)
 	{
 		Protect::_List->Clear();
 	}
